@@ -21,7 +21,7 @@ class glreturn
     {
         if (isset($params))
         {
-            $data=json_decode(html_entity_decode($params));
+            $data=json_decode(html_entity_decode($params, ENT_QUOTES));
             if ($data != null) {
                 $this->graph_type = $data->graph_type;
                 if ($data->data_filter != '')

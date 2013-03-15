@@ -23,7 +23,7 @@ class dailybankbalances
     {
         if (isset($params))
         {
-            $data=json_decode(html_entity_decode($params));
+            $data=json_decode(html_entity_decode($params, ENT_QUOTES));
             if ($data != null) {
                 $this->bank_act = $data->bank_act;
                 $this->graph_type = $data->graph_type;

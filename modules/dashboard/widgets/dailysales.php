@@ -22,7 +22,7 @@ class dailysales
     {
         if (isset($params))
         {
-            $data=json_decode(html_entity_decode($params));
+            $data=json_decode(html_entity_decode($params, ENT_QUOTES));
             if ($data != null) {
                 if ($data->top != '')
                     $this->top = $data->top;
@@ -36,7 +36,7 @@ class dailysales
     function render($id, $title)
     {
         $sql = 'SELECT * FROM (SELECT max(trans_date) `Week End`, '
-            .'weekofyear(trans_date) `Week No`, '
+            .'concat(cast(case when weekofyear(trans_date) = 1 and month(trans_date)=12 then year(trans_date) + 1 else year(trans_date) end as char),cast(weekofyear(trans_date) as char)) `Week No`, '
             .'sum(case when weekday(trans_date)=0 then gross_output else 0 end) Monday, '
             .'sum(case when weekday(trans_date)=1 then gross_output else 0 end) Tuesday, '
             .'sum(case when weekday(trans_date)=2 then gross_output else 0 end) Wednesday, '
@@ -66,7 +66,7 @@ class dailysales
             $sql .= ' WHERE '.$this->data_filter;
         $sql .= ' GROUP BY bt.trans_date  '
             .') days '
-            .'GROUP BY weekofyear(trans_date) '
+            .'GROUP BY concat(cast(case when weekofyear(trans_date) = 1 and month(trans_date)=12 then year(trans_date) + 1 else year(trans_date) end as char),cast(weekofyear(trans_date) as char)) '
             .'ORDER BY max(trans_date) desc ';
         if (isset($this->top))
             $sql .= ' limit '.$this->top;
