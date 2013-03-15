@@ -24,7 +24,7 @@ class weeklysales
     {
         if (isset($params))
         {
-            $data=json_decode(html_entity_decode($params));
+            $data=json_decode(html_entity_decode($params, ENT_QUOTES));
             if ($data != null) {
                 if ($data->top != '')
                     $this->top = $data->top;
@@ -50,7 +50,7 @@ class weeklysales
             $sql .= 'SELECT  `Week End`, `Week no`, `Gross Sales`, `Net Sales`, `Tax` '
                 .'FROM (';
         $sql .= 'SELECT max(bt.trans_date) `Week End`, '
-            .'weekofyear(bt.trans_date) `Week no`, '
+            .'concat(cast(case when weekofyear(bt.trans_date) = 1 and month(bt.trans_date)=12 then year(bt.trans_date) + 1 else year(bt.trans_date) end as char),cast(weekofyear(bt.trans_date) as char)) `Week no`, '
             .'sum((ttd.net_amount+ttd.amount)*ex_rate) `Gross Sales`, '
             .'sum(ttd.net_amount*ex_rate) `Net Sales`, '
             .'sum(ttd.amount*ex_rate) `Tax` '
@@ -70,7 +70,7 @@ class weeklysales
             .'ON tt.id = ttd.tax_type_id ';
         if ($this->data_filter != '')
             $sql .= ' WHERE '.$this->data_filter;
-        $sql .= ' GROUP BY weekofyear(bt.trans_date) ';
+        $sql .= ' GROUP BY concat(cast(case when weekofyear(bt.trans_date) = 1 and month(bt.trans_date)=12 then year(bt.trans_date) + 1 else year(bt.trans_date) end as char),cast(weekofyear(bt.trans_date) as char)) ';
         if (isset($this->orderby))
             $sql .= ') items order by `'.$this->orderby.'` '.$this->orderby_seq;
         if (isset($this->top))
