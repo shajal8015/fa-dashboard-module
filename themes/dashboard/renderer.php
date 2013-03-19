@@ -34,14 +34,6 @@
 			global $path_to_root, $help_base_url, $db_connections;
             add_access_extensions();
 
-            if (!$no_menu) {
-                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/jquery-1.3.2.js'></script>\n";
-                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/jquery-ui-1.7.2.custom.min.js'></script>\n";
-                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/jquery.json-2.2.min.js'></script>\n";
-                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/dashboard.js'></script>\n";
-                echo "<script type='text/javascript' src='https://www.google.com/jsapi'></script>\n";
-            }
-
             echo "<table class='callout_main' border='0' cellpadding='0' cellspacing='0'>\n";
 			echo "<tr>\n";
 			echo "<td colspan='2' rowspan='2'>\n";
@@ -65,15 +57,12 @@
 				{
                     if ($_SESSION["wa_current_user"]->check_application_access($app))
                     {
-                        if (count($app->modules) > 0)
-                        {
                             if ($sel_app == $app->id)
                                 $sel_application = $app;
                             $acc = access_string($app->name);
     						echo "<a class='".($sel_app == $app->id ? 'selected' : 'menu_tab')
     							."' href='$local_path_to_root/index.php?application=".$app->id
     							."'$acc[1]>" .$acc[0] . "</a>";
-    					}
     				}
 				}
 				echo "</div>";
@@ -159,6 +148,8 @@
 
 		}
 
+
+
 		function menu_footer($no_menu, $is_index)
 		{
 			global $version, $allow_demo_mode, $app_title, $power_url,
@@ -212,6 +203,11 @@
 			if (!$_SESSION["wa_current_user"]->check_application_access($selected_app))
 				return;
 
+			if (method_exists($selected_app, 'render_index'))
+			{
+				$selected_app->render_index();
+				return;
+			}
             // first have a look through the directory,
             // and remove old temporary pdfs and pngs
             $dir = company_path(). '/pdf_files';
@@ -248,6 +244,7 @@
                     ." AND app=".db_escape($selected_app->id)
                     ." ORDER BY column_id";
             $columns=db_query($sql);
+
             while($column=db_fetch($columns))
               {
                   echo '<div class="column" id="column'.$column['column_id'].'" >';
@@ -285,8 +282,7 @@
                   }
                   echo '</div>';
               }
-        }
+		}
 	}
-
 
 ?>

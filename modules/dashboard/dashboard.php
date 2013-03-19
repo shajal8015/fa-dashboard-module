@@ -57,6 +57,58 @@ class dashboard_app extends application
           }
           return $list;
       }
+
+	  function render_index()
+	  {
+	  		global $path_to_root;
+
+            echo '<div id="console" ></div>';
+
+            $userid = $_SESSION["wa_current_user"]->user;
+            $sql = "SELECT DISTINCT column_id FROM ".TB_PREF."dashboard_widgets"
+                    ." WHERE user_id =".db_escape($userid)
+                    ." AND app='$this->id'"
+                    ." ORDER BY column_id";
+            $columns=db_query($sql);
+            while($column=db_fetch($columns))
+            {
+                  echo '<div class="column" id="column'.$column['column_id'].'" >';
+                  $sql = "SELECT * FROM ".TB_PREF."dashboard_widgets"
+                        ." WHERE column_id=".db_escape($column['column_id'])
+                        ." AND user_id = ".db_escape($userid)
+                        ." AND app='$this->id'"
+                        ." ORDER BY sort_no";
+                  $items=db_query($sql);
+                  while($item=db_fetch($items))
+                  {
+                      $widgetData = $this->get_widget($item['widget']);
+                      echo '
+                      <div class="dragbox" id="item'.$item['id'].'">
+                          <h2>'.$item['description'].'</h2>
+                              <div id="widget_div_'.$item['id'].'" class="dragbox-content" ';
+                      if ($item['collapsed']==1)
+                          echo 'style="display:none;" ';
+                      echo '>';
+                      if ($widgetData != null) {
+                          if ($_SESSION["wa_current_user"]->can_access_page($widgetData->access))
+                          {
+                              include_once ($path_to_root . $widgetData->path);
+                              $className = $widgetData->name;
+                              $widgetObject = new $className($item['param']);
+                              $widgetObject->render($item['id'],$item['description']);
+                          } else {
+                              echo "<center><br><br><br><b>";
+                              echo _("The security settings on your account do not permit you to access this function");
+                              echo "</b>";
+                              echo "<br><br><br><br></center>";
+                          }
+                      }
+                      echo '</div></div>';
+                  }
+                  echo '</div>';
+            }
+      }
+
 }
 
 class widget
