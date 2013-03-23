@@ -32,6 +32,14 @@
 		function menu_header($title, $no_menu, $is_index)
 		{
 			global $path_to_root, $help_base_url, $db_connections;
+            if (!$no_menu) {
+                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/jquery-1.3.2.js'></script>\n";
+                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/jquery-ui-1.7.2.custom.min.js'></script>\n";
+                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/jquery.json-2.2.min.js'></script>\n";
+                echo "<script type='text/javascript' src='$path_to_root/themes/dashboard/js/dashboard.js'></script>\n";
+                echo "<script type='text/javascript' src='https://www.google.com/jsapi'></script>\n";
+            }
+
             add_access_extensions();
 
             echo "<table class='callout_main' border='0' cellpadding='0' cellspacing='0'>\n";

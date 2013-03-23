@@ -16,13 +16,7 @@ class hooks_dashboard extends hooks {
 		Install additonal menu options provided by module
 	*/
     function install_tabs($app) {
-        global $path_to_root;
 
-        add_js_ufile("$path_to_root/themes/dashboard/js/jquery-1.3.2.js");
-        add_js_ufile("$path_to_root/themes/dashboard/js/jquery-ui-1.7.2.custom.min.js");
-        add_js_ufile("$path_to_root/themes/dashboard/js/jquery.json-2.2.min.js");
-        add_js_ufile("$path_to_root/themes/dashboard/js/dashboard.js");
-        add_js_ufile("https://www.google.com/jsapi");
         $app->add_application(new dashboard_app);
     }
 
@@ -100,4 +94,5 @@ class hooks_dashboard extends hooks {
         return $this->update_databases($company, $updates, $check_only);
     }
 }
+
 ?>
